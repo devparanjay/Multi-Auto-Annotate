@@ -1,126 +1,325 @@
+# <center>Multi-Auto-Annotate</center>
 
-<p align="center"><a href="https://github.com/mdhmz1/Auto-Annotate#mdhmz1"><img src="https://github.com/mdhmz1/Auto-Annotate/blob/main/asset/logos/auto-annotate-logo-transparent.png" alt="Auto-Annotate Logo" height="240"></a></p>
-<h1 align="center">Auto-Annotate</h1>
-<p align="center">Automatically annotate your entire image directory by a single command. </p>
+---
 
-<p align="center"><img src="https://img.shields.io/badge/version-v1.0.0-brightgreen?style=plastic" alt="Auto-Annotate Version"> <img src="https://img.shields.io/github/repo-size/mdhmz1/Auto-Annotate?style=plastic" alt="repo size"> <img src="https://img.shields.io/github/stars/mdhmz1/Auto-Annotate?&style=social" alt="stars"></p>
+This tool is intended to annotate given data label(s) in all images in a given directory. This is useful and handy for ***Object Identification*** and ***Computer Vision*** purposes.
 
+All it takes is one single command in your terminal and then you can just sit back and watch the segmentation and labelling happen automatically.
 
+You also have the option to review it as it happens by using the `--displayMaskedImage=True` argument in your command.
 
+You can use the open COCO dataset to annotate common objects in your images without having to train a model yourself.
 
-For a more detailed explaination and code usage, please refer to this [medium article](https://medium.com/analytics-vidhya/automated-image-annotation-using-auto-annotate-tool-f8fff8ea4900).
+This tool is built on top of [Mask R-CNN](https://github.com/matterport/Mask_RCNN) and forked from the very useful and much appreciated repository [Auto-Annotate](https://github.com/mdhmz1/Auto-Annotate) by [Muhamman Hamzah](https://github.com/mdhmz1).
 
-<a href="https://medium.com/analytics-vidhya/automated-image-annotation-using-auto-annotate-tool-f8fff8ea4900">![](https://img.shields.io/badge/Medium-12100E?style=for-the-badge&logo=medium&logoColor=white) </a>
+This tool works in two modes -
 
+1. COCO Label Annotation - *No training required*. Uses the pre-trained weights of the the COCO dataset. Point to the directory using the `--image-directory=<directory_path>` argument and the annotations will be ready in a while.
+2. Custom Label Annotation - Train the model for custom labels  and use the trained weights for auto-annotation.
 
-**As simple as saying - "Annotate all the street sign (label) in the autonomous car dataset (directory)" and BAM! DONE.**
-Each and every image with a street sign in the diverse dataset directory containing images of all sorts which have a street sign are filtered and the segmentation annotation is performed in a single command.
+*No known issues have been encountered by me till now, but feel free to raise an issue if you come across one while using the program.* (The issues that I encountered while using the program in original repository have been fixed by me as as far as I know.)
 
-The Auto-Annotate tool provides auto annotation of segmentation masks for the objects in the images inside some directory based on the labels. Auto-Annotate is able to provide automated annotations for the labels defined in the COCO Dataset and also supports Custom Labels. This tool is built on top of [Mask R-CNN](https://github.com/matterport/Mask_RCNN) to support auto annotation for each instance of an object segment in the image. 
+## Annotations Format
 
-![Working Sample: ANNOTATE CUSTOM](asset/AutoAnnotate-Working_LowRes.png)
+The Annotations are stored in a JSON format with all the relevant details in the following format -
 
-The Auto-Annotate tool works on two modes
-* **COCO Label Annotation** - NO TRAINING REQUIRED. Just use the weights of the the Coco dataset. Point to the directory and the annotations are ready.
-* **Custom Label Annotation** - Train the model for the custom label. Use the weights and annotate.
+### JSON Format : -
 
-NOTE: Please refer to [knownIssues.md](knownIssues.md) file in the repo for known issues and their resolution. Please feel free to contribute in case of any errors/issues arising during the installation and usage of the tool.
-
-## JSON Annotation Format
-
-### SAMPLE JSON: 
-
-```json
-[
-  {
-    "filename": "bird_house_in_lawn.jpg",
-    "id": 1,
-    "label": "Bird House",
-    "bbox": [ 111.5, 122.5, 73, 66 ],
-    "segmentation": [
-      [ 167, 188.5, 174, 185.5, 177.5, 181, 177.5, 157, 183.5, 154, 184.5, 149, 159, 124.5, 150, 122.5, 
-        142, 124.5, 131, 131.5, 111.5, 150, 111.5, 156, 116.5, 162, 116.5, 184, 121, 188.5, 167, 188.5
-      ]
-    ]
-  }
-]
 ```
-
-### JSON FORMAT:
-```
-[
-  {
-    "filename": image_file_name,
-    "id": id_of_the_image,
-    "label": label_to_search_and_annotate,
-    "bbox": [ x, y, w, h ], -- x,y coordinate of top left point of bounding box
+{
+  "filename": "image_name",
+  "objects": [
+    {
+      "id": 1,
+      "label": "label_1",
+      "bbox": [ x, y, w, h ], -- x,y coordinate of top left point of bounding box
                             -- w,h width and height of the bounding box
-                            Format correspond to coco json response format for bounding box
-    "segmentation": [
+      "segmentation": [
       [ x1, y1, x2, y2,...] -- For X,Y belonging to the pixel location of the mask segment
-                            -- Format correspond to coco json response format for segmentation
-    ]
-  }
-]
+      ]
+    },
+      {
+      "id": 2,
+      "label": "label_2",
+      "bbox": [x, y, w, h ], -- x,y coordinate of top left point of bounding box
+                            -- w,h width and height of the bounding box
+      "segmentation": [
+      [ x1, y1, x2, y2,...] -- For X,Y belonging to the pixel location of the mask segment
+      ]
+    }
+  ]
+}
 ```
 
-###
-ORIGINAL IMAGE             |  MASKED IMAGE
-:-------------------------:|:-------------------------:
-![](asset/bird_house_in_lawn.jpg)  |  ![](asset/bird_house_in_lawn_masked.jpg)
+### Sample JSON : -
 
+```
+{
+  "filename": "dgct1.jpg",
+  "objects": [
+    {
+      "id": 1,
+      "label": "dog",
+      "bbox": [
+        93.5,
+        15.5,
+        149,
+        162
+      ],
+      "segmentation": [
+        [
+          224,
+          177.5,
+          217,
+          177.5,
+          203.5,
+          168,
+          200.5,
+          151,
+          195,
+          143.5,
+          193,
+          143.5,
+          186.5,
+          151,
+          185.5,
+          159,
+          182.5,
+          164,
+          175,
+          167.5,
+          163,
+          169.5,
+          149,
+          168.5,
+          134,
+          161.5,
+          130,
+          161.5,
+          119,
+          166.5,
+          111,
+          166.5,
+          108.5,
+          164,
+          108.5,
+          158,
+          122,
+          144.5,
+          128,
+          143.5,
+          132,
+          145.5,
+          136.5,
+          141,
+          136.5,
+          106,
+          134.5,
+          99,
+          127,
+          91.5,
+          122,
+          90.5,
+          114,
+          85.5,
+          99,
+          83.5,
+          93.5,
+          75,
+          95.5,
+          65,
+          101.5,
+          53,
+          102.5,
+          44,
+          107.5,
+          33,
+          127,
+          15.5,
+          151,
+          15.5,
+          173,
+          26.5,
+          179.5,
+          33,
+          186.5,
+          49,
+          207.5,
+          68,
+          209.5,
+          72,
+          213.5,
+          75,
+          219.5,
+          86,
+          235.5,
+          104,
+          237.5,
+          111,
+          241.5,
+          117,
+          242.5,
+          144,
+          241.5,
+          150,
+          236.5,
+          157,
+          229.5,
+          174,
+          224,
+          177.5
+        ]
+      ]
+    },
+    {
+      "id": 2,
+      "label": "dog",
+      "bbox": [
+        14.5,
+        85.5,
+        73,
+        88
+      ],
+      "segmentation": [
+        [
+          72,
+          173.5,
+          46,
+          173.5,
+          33,
+          170.5,
+          27.5,
+          165,
+          24.5,
+          156,
+          14.5,
+          148,
+          17,
+          143.5,
+          28,
+          142.5,
+          33,
+          139.5,
+          37.5,
+          134,
+          40.5,
+          127,
+          41.5,
+          100,
+          48,
+          90.5,
+          61,
+          85.5,
+          73,
+          85.5,
+          78,
+          87.5,
+          82.5,
+          91,
+          85.5,
+          98,
+          85.5,
+          107,
+          82.5,
+          114,
+          82.5,
+          121,
+          86.5,
+          128,
+          87.5,
+          146,
+          79.5,
+          169,
+          72,
+          173.5
+        ]
+      ]
+    }
+  ]
+}
+```
 
 ## Installation
-1. Clone this repository
 
-2. Install dependencies
-   ```bash
-   pip3 install -r requirements.txt
-   ```
+1. Clone this repository.
+2. Install dependencies.
+	```
+	pip install -r requirements.txt
+	```
+3. If planning to use pre-trained COCO weights, download the weights file trained on COCO dataset from Mask R-CNN repository.
+	- [Mask R-CNN Releases](https://github.com/matterport/Mask_RCNN/releases): Check for the new file here. It should be names `mask_rcnn_coco.h5`.The weightes I used are from Mask R-CNN 2.0.
+	
+4. If planning to train your own model for objects not in the COCO dataset, train Mask-RCNN accordingly and use those weights instead with the `--weights` argument in the execution command.
+5. Installation complete!
 
-3. **If annotating objects supported by COCO Dataset** 
-  Download pre-trained COCO weights (mask_rcnn_coco.h5) from the [releases page](https://github.com/matterport/Mask_RCNN/releases) and store it in the root directory.
-  **If annotating objects Custom Objects** 
-  Train Mask RCNN and use those weights.
+## One Command to Annotate them All
 
-4. Run Commands as below based on the mode.
-  ```bash
-  python3 annotate.py annotateCoco --image_directory=/path/to/the/image/directory/ --label=object_label_to_annotate --weights=/path/to/weights.h5 --displayMaskedImages=False
-  ```
-  ```bash
-  python3 annotate.py annotateCustom --image_directory=/path/to/the/image/directory/ --label=object_label_to_annotate --weights=/path/to/weights.h5 --displayMaskedImages=False
-  ```
+You'll have to give a different kind of command depending upon whether you're using COCO weights or not.
 
-5. Find the annotations in the directory - /path/to/the/image/directory/ specified above
+### For Multiple Labels Annotation -
 
-
-## Annotating on MS COCO
-Use pre-trained weights for MS COCO. After finishing with the installation, we
-can run it directly from the command line as such:
+***You'll have to configure labels in the `multi-annotate.py` file as described in the next section for it to work.*** <br>
+The *default labels set by me are "cat" and "dog"*, so unless you want your images to be segmented for only kawaii neko-chans and inu-chans, please read the next section and change the labels.
 
 ```
-# Annotate label defined by COCO
-python3 annotate.py annotateCoco --image_directory=/path/to/the/image/directory/ --label=object_label_to_annotate --weights=/path/to/weights.h5 --displayMaskedImages=False
+python multi-annotate.py annotateCoco --image_directory=/path_to_the_image_directory/ --labels=True
 ```
-Note: --label=object_label_to_annotate should be in accordance to the COCO dataset labels.
-Refer [COCO Dataset](https://cocodataset.org/) for more details.
 
-## Annotating on Custom Images
-Use pre-trained weights for the custom label. After finishing with the installation, we
-can run it directly from the command line as such:
+If you're using cutom trained weights, use this command instead -
 
 ```
-# Annotate Custom
-python3 annotate.py annotateCustom --image_directory=/path/to/the/image/directory/ --label=object_label_to_annotate --weights=/path/to/weights.h5 --displayMaskedImages=False
+python multi-annotate.py annotateCustom --image_directory=/path_to_the_image_directory/ --weights=/path_to/weights.h5 --labels=True
 ```
-Note: --label=object_label_to_annotate should be a label for which the weights are provided.
+
+If you want to see and save the masked versions of the segmented images, use
+```
+--displayMaskedImages=True
+```
+argument and you'll be able to review things as they happen. You'll need to close the image viewer's window each time for the program to move ahead though.
 
 
-## Training on Your Own Dataset
+### For Single Label Annotation -
 
-Read the original post by Waleed Abdulla [blog post about the balloon color splash sample](https://engineering.matterport.com/splash-of-color-instance-segmentation-with-mask-r-cnn-and-tensorflow-7c761e238b46) where he explained the process starting from annotating images to training to using the results in a sample application.
+```
+python multi-annotate.py annotateCoco --image_directory=/path_to_the_image_directory/ --label=single_label_from_COCO
+```
 
-The use train.py which is a modified version of balloon.py written by Waleed to support only the training part.
+If you're using cutom trained weights, use this command instead -
+
+```
+python multi-annotate.py annotateCustom --image_directory=/path_to_the_image_directory/ --weights=/path_to/weights.h5 --label=single_label_from_trained_weights
+```
+
+If you want to see and save the masked versions of the segmented images, use
+```
+--displayMaskedImages=True
+```
+argument and you'll be able to review things as they happen. You'll need to close the image viewer's window each time for the program to move ahead though.
+
+## Configure Labels for Automated Multi Annotation !important
+
+You need to configure the program file for it to work with multiple labels. Follow the steps below -
+
+1. Open `multi-annotate.py` in any IDE or Text Editor.
+2. Use CTRL+F to find the `set_labels_here` list.
+3. Enter the labels in list format, with each item as a string. <br>
+	e.g.
+	```
+	set_labels_here = ['cat', 'dog', 'tv']
+	```
+	*Note that the labels entered here should have trained weights provided for them or the program will fail. Same for the single label passed in the command argument.*
+4. Save the file.
+
+## All Done!
+
+By now you should be ready to automatically annotate and label bulk of images in the whole directory. <br>
+
+***Star this repo and raise issues if you face any.***
+
+If you want to figure out how to train a model on your own dataset, check out the original blog post [about the balloon color splash sample](https://engineering.matterport.com/splash-of-color-instance-segmentation-with-mask-r-cnn-and-tensorflow-7c761e238b46) by Waleed Abdulla where he explained the process starting from annotating images to training to using the results in a sample application.
+
+The use train.py which is a modified version of balloon.py written by Waleed to support only the training part. Here are the commands for that -
+
 ```
     # Train a new model starting from pre-trained COCO weights
     python3 customTrain.py train --dataset=/path/to/custom/dataset --weights=coco
@@ -129,19 +328,10 @@ The use train.py which is a modified version of balloon.py written by Waleed to 
     python3 customTrain.py train --dataset=/path/to/custom/dataset --weights=last
 ```
 
-## :clap: Supporters
+I've not checked and touched this part of the code from the [original repository](https://github.com/mdhmz1/Auto-Annotate), and will do so and smooth out any kinks and issues I face when I do. Feel free to raise issues meanwhile.
 
-### :star: Stargazers
-[![Stargazers repo roster for @mdhmz1/Auto-Annotate](https://reporoster.com/stars/dark/mdhmz1/Auto-Annotate)](https://github.com/mdhmz1/Auto-Annotate/stargazers)
-### :twisted_rightwards_arrows: Forkers 
-[![Forkers repo roster for @mdhmz1/Auto-Annotate](https://reporoster.com/forks/dark/mdhmz1/Auto-Annotate)](https://github.com/mdhmz1/Auto-Annotate/network/members)
+---
 
-##
+### <center> All the best in your projects and adventures! </center>
 
-[🤝 CONNECT WITH ME ON LINKEDIN](https://www.linkedin.com/in/mdhmz1/)
-
-
-<a href="https://www.linkedin.com/in/mdhmz1/">![](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white
-) </a>
-
-##
+---
