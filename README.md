@@ -85,7 +85,7 @@ The Annotations are stored in a JSON format with all the relevant details in the
 	pip install -r requirements.txt
 	```
 3. If planning to use pre-trained COCO weights, download the weights file trained on COCO dataset from Mask R-CNN repository.
-	- [Mask R-CNN Releases](https://github.com/matterport/Mask_RCNN/releases): Check for the new file here. It should be names `mask_rcnn_coco.h5`.The weightes I used are from Mask R-CNN 2.0.
+	- [Mask R-CNN Releases](https://github.com/matterport/Mask_RCNN/releases): Check for the new file here. It should be named `mask_rcnn_coco.h5`.The weightes I used are from Mask R-CNN 2.0.
 	
 4. If planning to train your own model for objects not in the COCO dataset, train Mask-RCNN accordingly and use those weights instead with the `--weights` argument in the execution command.
 5. Installation complete!
