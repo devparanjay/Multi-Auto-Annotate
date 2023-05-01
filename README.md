@@ -8,7 +8,7 @@ All it takes is one single command in your terminal and then you can just sit ba
 
 You also have the option to review it as it happens by using the `--displayMaskedImage=True` argument in your command.
 
-You can use the open COCO dataset to annotate common objects in your images without having to train a model yourself.
+You can use the open [COCO dataset](https://cocodataset.org/) to annotate common objects in your images without having to train a model yourself.
 
 This tool is built on top of [Mask R-CNN](https://github.com/matterport/Mask_RCNN) and forked from the very useful and much appreciated repository [Auto-Annotate](https://github.com/mdhmz1/Auto-Annotate) by [Muhamman Hamzah](https://github.com/mdhmz1).
 
